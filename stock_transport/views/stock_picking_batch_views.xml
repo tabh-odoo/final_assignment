@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="stock_picking_batch_form_inherited" model="ir.ui.view">
+        <field name="name">stock.picking.batch.view.form.inherit.stock.transport.category</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="inherit_id" ref="stock_picking_batch.stock_picking_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='scheduled_date']" position="after">
+                <field name="dock_id" placeholder="Dock A"/>
+                <field name="vehicle_id" placeholder="Opel GJ45XC1234"/>
+                <field name="vehicle_category_id" placeholder="Semi-Truck (250kg, 30m3)" />
+                <field name="total_volume" invisible="not vehicle_category_id"/>
+                <field name="volume_percent" widget="progressbar" invisible="not vehicle_category_id"/>
+                <field name="total_weight" invisible="not vehicle_category_id"/>
+                <field name="weight_percent" widget="progressbar" invisible="not vehicle_category_id"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_stock_picking_batch_graph_view" model="ir.ui.view">
+        <field name="name">stock.picking.batch.graph</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="arch" type="xml">
+            <graph string="Batch Tranfers">
+                <field name="total_volume" type="measure"/>
+                <field name="total_weight" type="measure"/>
+                <field name="transfers_count" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- <record id="stock_picking_batch_gantt" model="ir.ui.view">
+        <field name="name">stock.picking.batch.graph.view</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="arch" type="xml">
+            <gantt 
+            date_stop="create_date" 
+            date_start="scheduled_date" 
+            decoration-success="state == 'done'"
+            decoration-info="state == 'draft'"
+            color="vehicle"
+            default_group_by="vehicle,vehicle_category_id">
+            <field name="name"/>
+            <field name="state"/>
+            <field name="user_id"/>
+                <templates>
+                    <div t-name="gantt-popover" class="container-fluid">
+                        <field name="user_id"/>
+                        <field name="name"/>
+                        <field name="state"/>
+                    </div>
+                </templates>
+            </gantt>
+        </field>
+    </record> -->
+
+    <record id="stock_picking_batch.stock_picking_batch_action" model="ir.actions.act_window">
+        <field name="view_mode">tree,kanban,graph,form</field>
+        <field name="context">{
+            'graph_mode': 'bar',
+            'graph_groupbys': ['scheduled_date', 'vehicle_category_id'],
+        }</field>
+    </record>
+
+</odoo>
