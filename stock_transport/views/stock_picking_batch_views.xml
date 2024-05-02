@@ -11,10 +11,29 @@
                 <field name="dock_id" placeholder="Dock A"/>
                 <field name="vehicle_id" placeholder="Opel GJ45XC1234"/>
                 <field name="vehicle_category_id" placeholder="Semi-Truck (250kg, 30m3)" />
-                <field name="total_volume" invisible="not vehicle_category_id"/>
-                <field name="volume_percent" widget="progressbar" invisible="not vehicle_category_id"/>
-                <field name="total_weight" invisible="not vehicle_category_id"/>
-                <field name="weight_percent" widget="progressbar" invisible="not vehicle_category_id"/>
+
+
+                <label for='total_weight' invisible="not vehicle_category_id"/>
+                    <div class='d-flex flex-row justify-content-between' invisible="not vehicle_category_id">
+                        <div class='d-flex flex-row gap-2'>
+                            <div class='d-flex flex-row gap-1'>
+                                <field name="total_weight"/>
+                                <span>Kg</span>
+                            </div>
+                            <field name="weight_percent" widget="progressbar"/>
+                        </div>
+                    </div>
+
+                <label for='total_volume' invisible="not vehicle_category_id"/>
+                    <div class='d-flex flex-row justify-content-between' invisible="not vehicle_category_id">
+                        <div class='d-flex flex-row gap-2'>
+                            <div class='d-flex flex-row gap-1'>
+                                <field name="total_volume"/>
+                                <span>m³</span>
+                            </div>
+                            <field name="volume_percent" widget="progressbar" />
+                        </div>
+                    </div>
             </xpath>
         </field>
     </record>
@@ -25,40 +44,32 @@
         <field name="model">stock.picking.batch</field>
         <field name="arch" type="xml">
             <graph string="Batch Tranfers">
-                <field name="total_volume" type="measure"/>
-                <field name="total_weight" type="measure"/>
+                <field name="volume_for_graph" type="measure"/>
+                <field name="weight_for_graph" type="measure"/>
                 <field name="transfers_count" type="measure"/>
+                <field name="no_of_lines" type="measure"/>
             </graph>
         </field>
     </record>
 
-    <!-- <record id="stock_picking_batch_gantt" model="ir.ui.view">
-        <field name="name">stock.picking.batch.graph.view</field>
+    <record id="stock_picking_batch_gantt_view" model="ir.ui.view">
+        <field name="name">stock.picking.batch.gantt.view</field>
         <field name="model">stock.picking.batch</field>
         <field name="arch" type="xml">
-            <gantt 
-            date_stop="create_date" 
-            date_start="scheduled_date" 
-            decoration-success="state == 'done'"
-            decoration-info="state == 'draft'"
-            color="vehicle"
-            default_group_by="vehicle,vehicle_category_id">
-            <field name="name"/>
-            <field name="state"/>
-            <field name="user_id"/>
-                <templates>
-                    <div t-name="gantt-popover" class="container-fluid">
-                        <field name="user_id"/>
-                        <field name="name"/>
-                        <field name="state"/>
-                    </div>
-                </templates>
+            <gantt
+                date_start="create_date"
+                date_stop="scheduled_date"
+                decoration-success="state == 'done'"
+                decoration-info="state == 'draft'"
+                default_group_by="dock_id,vehicle_id"
+                color="vehicle_id">
+                <field name="state"/>
             </gantt>
         </field>
-    </record> -->
+    </record>
 
     <record id="stock_picking_batch.stock_picking_batch_action" model="ir.actions.act_window">
-        <field name="view_mode">tree,kanban,graph,form</field>
+        <field name="view_mode">tree,kanban,graph,form,gantt</field>
         <field name="context">{
             'graph_mode': 'bar',
             'graph_groupbys': ['scheduled_date', 'vehicle_category_id'],
